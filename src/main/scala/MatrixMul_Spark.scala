@@ -7,20 +7,25 @@ import org.apache.spark.mllib.linalg.distributed.{IndexedRow, IndexedRowMatrix, 
 object MatrixMul_Spark {
   def main(args: Array[String]): Unit = {
     val appName = "Matrix Multiplication Test"
-    val conf = new SparkConf().setAppName(appName).setMaster("local[16]")
+    val conf = new SparkConf().setAppName(appName).setMaster("local[*]")
     val sc = new SparkContext(conf)
 
-    //generate left matrix
+    //predefine val
     val r = scala.util.Random
     val rows_ =
       for (i <- 0 to 1000-1)
         yield (i,(for (j <- 0 to 1000-1)
           yield r.nextDouble).toArray)
     val rows = sc.parallelize(rows_.toSeq).map{case (i,rw) => IndexedRow(i,Vectors.dense(rw))}
-    val rows2_ = for (i <- 0 to 1000-1) yield (i,(for (j <- 0 to 1000-1) yield r.nextDouble).toArray)
+    val rows2_ =
+      for (i <- 0 to 1000-1)
+        yield (i,(for (j <- 0 to 1000-1)
+          yield r.nextDouble).toArray)
     val rows2 = sc.parallelize(rows2_.toSeq).map{case (i,rw) => IndexedRow(i,Vectors.dense(rw))}
+
+    //generate left matrix
     val indexedRowMatrix = new IndexedRowMatrix(rows).toBlockMatrix().cache()
-    //print right matrix
+    //print left matrix
     indexedRowMatrix.blocks.collect.foreach(println)
     //validate the matrix
     indexedRowMatrix.validate()
@@ -34,7 +39,10 @@ object MatrixMul_Spark {
 
     //Matrix Multiplication
     val begin = System.nanoTime()
-    indexedRowMatrix.multiply(localMatrix).blocks.collect.foreach(println)
+    for (times <- 1 to 100) {
+      indexedRowMatrix.multiply(localMatrix).blocks.collect.foreach(println)
+      println("count: " + times)
+    }
     val end = System.nanoTime()
 
     //Display processing time

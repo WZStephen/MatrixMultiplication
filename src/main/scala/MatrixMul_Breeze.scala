@@ -21,8 +21,11 @@ object MatrixMul_Breeze {
     /** Dense Matrix MUltiplication using breeze*/
     val begin = System.nanoTime()
     println("Result using breeze: ")
-    val MN: DenseMatrix[Double] = M * N
-    println(MN)
+    for (times <- 1 to 100) {
+      val MN: DenseMatrix[Double] = M * N
+      //println(MN)
+      println("count: " + times);
+    }
     val end = System.nanoTime()
 
     //Display processing time

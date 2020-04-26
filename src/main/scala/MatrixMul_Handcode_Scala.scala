@@ -45,14 +45,17 @@ object MatrixMul_Handcode_Scala {
 
     //matrix multiplication
     val begin = System.nanoTime()
-    for (i <- 0 to 999){
-      for(j <- 0 to 999){
-        var sum: Double = 0.0
-        for(k <- 0 to 999){
-          sum = sum + M(i)(k)*N(k)(j)
+    for (times <- 1 to 100){
+      for (i <- 0 to 999){
+        for(j <- 0 to 999){
+          var sum: Double = 0.0
+          for(k <- 0 to 999){
+            sum = sum + M(i)(k)*N(k)(j)
+          }
+          MN(i)(j) = sum
         }
-        MN(i)(j) = sum
       }
+      println("count: " + times)
     }
     val end = System.nanoTime()
 
