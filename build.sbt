@@ -10,7 +10,7 @@ lazy val root = (project in file(".")).
 
     publishMavenStyle := true,
 
-    mainClass := Some("MatrixMul_Spark")
+    //mainClass := Some("MatrixMul_Spark")
 )
 
 libraryDependencies ++= Seq(
